@@ -1,59 +1,60 @@
-// Importeer het npm package Express (uit de door npm aangemaakte node_modules map)
-// Deze package is geïnstalleerd via `npm install`, en staat als 'dependency' in package.json
-import express from 'express'
+import express from "express";
+import { Liquid } from "liquidjs";
+const app = express();
+app.use(express.static("public"));
 
-// Importeer de Liquid package (ook als dependency via npm geïnstalleerd)
-import { Liquid } from 'liquidjs';
-
-
-console.log('Hieronder moet je waarschijnlijk nog wat veranderen')
-// Doe een fetch naar de data die je nodig hebt
-// const apiResponse = await fetch('...')
-
-// Lees van de response van die fetch het JSON object in, waar we iets mee kunnen doen
-// const apiResponseJSON = await apiResponse.json()
-
-// Controleer eventueel de data in je console
-// (Let op: dit is _niet_ de console van je browser, maar van NodeJS, in je terminal)
-// console.log(apiResponseJSON)
-
-
-// Maak een nieuwe Express applicatie aan, waarin we de server configureren
-const app = express()
-
-// Gebruik de map 'public' voor statische bestanden (resources zoals CSS, JavaScript, afbeeldingen en fonts)
-// Bestanden in deze map kunnen dus door de browser gebruikt worden
-app.use(express.static('public'))
-
-// Stel Liquid in als 'view engine'
 const engine = new Liquid();
-app.engine('liquid', engine.express()); 
+app.engine("liquid", engine.express());
+app.set("views", "./views");
 
-// Stel de map met Liquid templates in
-// Let op: de browser kan deze bestanden niet rechtstreeks laden (zoals voorheen met HTML bestanden)
-app.set('views', './views')
+//--- base directus url ---
+const directusApiBaseUrl = "https://fdnd-agency.directus.app/items";
 
-// Maak een GET route voor de index (meestal doe je dit in de root, als /)
-app.get('/', async function (request, response) {
-   // Render index.liquid uit de Views map
-   // Geef hier eventueel data aan mee
-   response.render('index.liquid')
-})
+//--- endpoints ---
+const webinarsEndpoint = `${directusApiBaseUrl}/avl_webinars`;
+const categoriesEndpoint = `${directusApiBaseUrl}/avl_categories`;
 
-// Maak een POST route voor de index; hiermee kun je bijvoorbeeld formulieren afvangen
-// Hier doen we nu nog niets mee, maar je kunt er mee spelen als je wilt
-app.post('/', async function (request, response) {
-  // Je zou hier data kunnen opslaan, of veranderen, of wat je maar wilt
-  // Er is nog geen afhandeling van een POST, dus stuur de bezoeker terug naar /
-  response.redirect(303, '/')
-})
+app.get("/", async function (req, res) {
+  const fetchWebinars = await fetch(
+    webinarsEndpoint +
+      "?fields=duration,title,thumbnail,categories.*.*,speakers.*.*"
+  );
+  const { data: webinarData } = await fetchWebinars.json();
 
-// Stel het poortnummer in waar Express op moet gaan luisteren
-// Lokaal is dit poort 8000, als dit ergens gehost wordt, is het waarschijnlijk poort 80
-app.set('port', process.env.PORT || 8000)
+  const categories = await fetch(categoriesEndpoint + "?fields=name");
+  const { data: categoriesData } = await categories.json();
 
-// Start Express op, haal daarbij het zojuist ingestelde poortnummer op
-app.listen(app.get('port'), function () {
-  // Toon een bericht in de console en geef het poortnummer door
-  console.log(`Application started on http://localhost:${app.get('port')}`)
-})
+  const allCategories = [{ id: 0, name: "Select all" }, ...categoriesData];
+
+  const selectedCategory = req.query.category;
+
+  const filteredWebinars =
+    selectedCategory && selectedCategory !== "Select all"
+      ? webinarData.filter((webinar) =>
+          webinar.categories.some(
+            (category) => category.avl_categories_id.name === selectedCategory
+          )
+        )
+      : webinarData;
+
+  const webinars = filteredWebinars.map((webinar) => ({
+    id: webinar.id,
+    title: webinar.title,
+    duration: webinar.duration,
+    thumbnail: webinar.thumbnail,
+    categories: webinar.categories,
+    speakers: webinar.speakers,
+  }));
+
+  res.render("index.liquid", {
+    webinars: webinars,
+    categories: allCategories,
+    hasWebinars: webinars.length > 0,
+    selectedCategory: selectedCategory || "Select all",
+  });
+});
+
+app.set("port", process.env.PORT || 8000);
+app.listen(app.get("port"), function () {
+  console.log(`Application started on http://localhost:${app.get("port")}`);
+});
