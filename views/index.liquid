@@ -1,1 +1,11 @@
-Succes!
+<!-- views/index.liquid -->
+    {% render 'partials/head.liquid', title: 'Webinars' %}
+  </head>
+  <body>
+
+ {% render 'partials/header.liquid', categories: categories %} 
+  {% render 'partials/categories.liquid', categories: categories %} 
+    {% render 'partials/webinars.liquid', webinars: webinars %}
+    {% comment %} {% render 'partials/bottom-nav.liquid' %} {% endcomment %}
+  </body>
+

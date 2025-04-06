@@ -1,0 +1,18 @@
+<!-- partials/webinars.liquid -->
+<section class="webinars-container">
+  {% for webinar in webinars %}
+    <article class="webinar-item" data-categories="{% for category in webinar.categories %}{{ category.avl_categories_id.name }} {% endfor %}">
+      <div class="webinar-img">
+        <img src="https://fdnd-agency.directus.app/assets/{{ webinar.thumbnail }}" alt="" class="thumbnail-img">
+        <p class="duration">{{ webinar.duration }}</p>
+      </div>
+      <h2 class="webinar-title">{{ webinar.title }}</h2>
+      {% for speaker in webinar.speakers %}
+        <p class="speakers-text">{{ speaker.avl_speakers_id.fullname }}</p>
+      {% endfor %}
+      {% for category in webinar.categories %}
+        <p class="categorie-box">{{ category.avl_categories_id.name }}</p>
+      {% endfor %}
+    </article>
+  {% endfor %}
+</section>

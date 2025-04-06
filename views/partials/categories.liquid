@@ -1,0 +1,10 @@
+<!-- partials/categories.liquid -->
+<section class="categories">
+  <button class="category-btn active" type="submit" name="category" value="All Categories" {% if selectedCategory == "All Categories" %}class="active"{% endif %}>All Categories</button>
+  {% for category in categories %}
+    <button class="category-btn hidden-mobile" type="submit" name="category" value="{{ category.name }}" {% if selectedCategory == category.name %}class="active"{% endif %}>
+      {{ category.name }}
+    </button>
+  {% endfor %}
+  <button id="show-more-btn">Show More</button>
+</section>
