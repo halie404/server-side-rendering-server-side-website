@@ -1,0 +1,96 @@
+/* =========== RESET & BASISSTIJLEN =========== */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* =========== KLEURVARIABELEN =========== */
+:root {
+  --primary-color: #6a0025; /* Deep red */
+  --secondary-color: #77062e; /* Darker red */
+  --text-color: white; /* White text */
+  --hover-color: #ffcccb; /* Light pink for hover */
+  --background-light: #ffffffd2; /* Semi-transparent white for backgrounds */
+  --shadow-color: rgba(0, 0, 0, 0.3); /* Shadow color */
+  --border-radius: 0.5rem; /* Subtle border radius */
+  --font-family: Arial, sans-serif; /* Font family */
+  --padding-standard: 1rem; /* Standard padding */
+
+  --text-primary: white;
+  --text-secondary: #1f000b;
+
+  --highlight: #ffcccb;
+
+  --box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+/* =========== NAVIGATIE =========== */
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 10vh;
+  background-color: var(--primary-bg);
+  padding: 0 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.menu-links {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  list-style: none;
+}
+
+.menu-links a {
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+/* =========== LAYOUT & CONTAINERS =========== */
+.site-container {
+  padding-top: 12vh;
+}
+
+.site-content {
+  text-align: center;
+  padding: 2rem;
+}
+
+.site-content h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.site-content p {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* =========== MEDIA QUERIES (TABLET & DESKTOP) =========== */
+@media (min-width: 768px) {
+  .menu-links {
+    gap: 4rem;
+  }
+
+  .site-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .webinars-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .webinars-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
